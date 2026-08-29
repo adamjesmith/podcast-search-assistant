@@ -19,6 +19,11 @@ export async function transcribeAudio(client: OpenAI, filePath: string): Promise
   });
 
   // The SDK's verbose_json type doesn't declare `segments`, but the API returns it.
-  const segments = (response as unknown as { segments?: TranscriptSegment[] }).segments ?? [];
+  const segments = (response as unknown as { segments?: TranscriptSegment[] }).segments;
+  if (!segments) {
+    throw new Error(
+      `Whisper response for ${filePath} had no 'segments' field — response_format/timestamp_granularities may not be supported as expected.`,
+    );
+  }
   return segments.map((s) => ({ start: s.start, end: s.end, text: s.text.trim() }));
 }

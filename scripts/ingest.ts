@@ -29,10 +29,10 @@ async function main() {
   const workDir = await mkdtemp(path.join(tmpdir(), "podcast-ingest-"));
   const allChunks: Chunk[] = [];
 
-  for (const episode of episodes) {
+  for (const [index, episode] of episodes.entries()) {
     console.log(`\n[${episode.title}] downloading audio...`);
-    const rawPath = path.join(workDir, `${episode.id.replace(/[^a-z0-9]/gi, "_")}-raw.mp3`);
-    const compressedPath = rawPath.replace("-raw.mp3", "-compressed.mp3");
+    const rawPath = path.join(workDir, `episode-${index}-raw.mp3`);
+    const compressedPath = path.join(workDir, `episode-${index}-compressed.mp3`);
     await downloadFile(episode.audioUrl, rawPath);
 
     console.log(`[${episode.title}] compressing for transcription...`);
