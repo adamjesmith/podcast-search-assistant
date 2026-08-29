@@ -30,21 +30,22 @@ Adding one would be infrastructure for a problem that doesn't exist yet in
 this slice, at the cost of setup time the brief explicitly says to spend on
 retrieval quality instead.
 
-**A JSON file, not SQLite/Postgres.** Same reasoning, one level further: the
-"database" is the whole problem being sized to the actual data volume rather
-than to what a production system would eventually need. It's also the
-most legible artifact for the walkthrough — the entire searchable state of
-the app is one file you can open and read.
+**A JSON file, not SQLite/Postgres.** Same reasoning, one level further:
+storage is sized to the actual data volume, not to what production would
+eventually need. It's also the most legible walkthrough artifact — the
+entire searchable state is one file you can open and read.
 
 **Surfaced similarity scores instead of a relevance cutoff.** Brute-force
 top-k always returns *something*, even for a query with no real match —
-verified this live: an on-topic query scores 0.45+, a nonsense query
-tops out around 0.30–0.36. The two bands aren't cleanly separable, so
-rather than pick a hard cutoff that could silently drop a real but
-oddly-phrased match, the UI shows each result's match percentage and
-dims/flags the set when the top score is weak, and leaves the judgment
-call to the person searching — the right default for a tool used by
-domain-expert journalists, not a consumer search box.
+verified live: on-topic queries score 0.45+, nonsense queries top out
+around 0.30–0.36. Those bands overlap too much for a hard cutoff to be
+safe, so 0.35 (picked from that observed gap, not derived analytically)
+only dims weak results and shows a banner — it never filters, so a real
+but oddly-phrased match can't be silently dropped. The "% match" shown
+is the raw cosine similarity, not a calibrated confidence probability;
+it's a ranking signal, and the right default is to leave the actual
+relevance judgment to the domain-expert journalist searching, not a
+consumer-style "best answer" box.
 
 **Whisper over relying on feed-provided transcripts.** Checked the actual
 feed before building: no `<podcast:transcript>` tag is present despite the
