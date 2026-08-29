@@ -22,6 +22,13 @@ export async function loadIndex(): Promise<IndexFile> {
   return cached;
 }
 
+/**
+ * Cosine similarity between two `text-embedding-3-small` vectors, in
+ * [-1, 1] (effectively [0, 1] for this model in practice). This raw score
+ * is what the UI renders as "% match" — it's a relative ranking signal,
+ * not a calibrated confidence probability. See DESIGN_NOTE.md for how the
+ * UI's low-confidence threshold was picked from observed score bands.
+ */
 function cosineSimilarity(a: number[], b: number[]): number {
   let dot = 0;
   let normA = 0;
