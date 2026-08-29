@@ -36,6 +36,16 @@ than to what a production system would eventually need. It's also the
 most legible artifact for the walkthrough — the entire searchable state of
 the app is one file you can open and read.
 
+**Surfaced similarity scores instead of a relevance cutoff.** Brute-force
+top-k always returns *something*, even for a query with no real match —
+verified this live: an on-topic query scores 0.45+, a nonsense query
+tops out around 0.30–0.36. The two bands aren't cleanly separable, so
+rather than pick a hard cutoff that could silently drop a real but
+oddly-phrased match, the UI shows each result's match percentage and
+dims/flags the set when the top score is weak, and leaves the judgment
+call to the person searching — the right default for a tool used by
+domain-expert journalists, not a consumer search box.
+
 **Whisper over relying on feed-provided transcripts.** Checked the actual
 feed before building: no `<podcast:transcript>` tag is present despite the
 namespace being declared, and episode descriptions are short marketing
