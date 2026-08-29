@@ -1,0 +1,5 @@
+# AI Workflow Log
+
+- Used Claude Code throughout for architecture discussion, scaffolding, and implementation.
+- Before committing to a transcript-acquisition strategy, had Claude fetch and inspect the actual RSS feed rather than assuming: confirmed no `<podcast:transcript>` tags exist (despite the namespace being declared) and that all 5 target episodes exceed Whisper's 25MB upload cap (29-51MB). This ruled out a feed-text-only approach and made audio re-encoding a required ingest step, not an edge case — good example of checking assumptions against real data before writing code.
+- AI got something wrong and it was caught by testing, not review: the generated ingest script used the global `fetch()` to download episode audio, which returned a bare 404 on this feed's redirecting CDN (episodes.captivate.fm -> dax.captivate.fm). Diffing against curl and Node's core `https` module (both got the correct 302->200) showed this was an undici-specific quirk with this CDN, not a real error. Rewrote the downloader on node:http/https with manual redirect-following instead of debugging fetch further, since chasing an undici bug wasn't worth the time budget.
